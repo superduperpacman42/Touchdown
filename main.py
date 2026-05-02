@@ -4,8 +4,9 @@ import numpy as np
 from PIL import Image
 from constants import *
 from player import Player
+import asyncio
 
-exe = 1
+exe = 0
 test = 0
 
 class Game:
@@ -27,8 +28,8 @@ class Game:
             self.decorateTop.append(Player(self, "FieldGoal", WIDTH/2, -1400*2+HEIGHT/2, 1))
         self.decorateTop.append(Player(self, "FieldGoal", WIDTH/2, -self.borders[-2]+360, 1, directions=["2"]))
         self.boat = False
-        self.backfield = self.loadImage("backfield.png",1)[0]
-        self.textbubble = self.loadImage("TextBubble.png",1)[0]
+        self.backfield = self.loadImage("Backfield.png",1)[0]
+        self.textbubble = self.loadImage("Textbubble.png",1)[0]
         self.ymax = 0
         self.lastBiome = "none"
         self.captionTime = 0
@@ -289,7 +290,7 @@ class Game:
             x = WIDTH/2
             y = int(self.y/350)*350 - HEIGHT*2 + HEIGHT*.125
             self.decorateBottom.append(Player(self, "RiverWaves", x, y, 1))
-            self.decorateBottom.append(Player(self, "RiverBank", x, y, 1))
+            self.decorateBottom.append(Player(self, "Riverbank", x, y, 1))
             x = random.random()*WIDTH*.5 + WIDTH*.25
             self.decorateBottom.append(Player(self, "Log", x, y, 1))
             grid = self.obstacleGrid(7, 5, 0.6)
@@ -460,9 +461,9 @@ class Game:
 
         self.state = "start"
         self.reset()
-        self.run()
+        asyncio.run(self.run())
 
-    def run(self):
+    async def run(self):
         ''' Iteratively call update '''
         clock = pygame.time.Clock()
         self.pause = False
@@ -476,6 +477,7 @@ class Game:
             dt = clock.tick(TIME_STEP)
             self.update(dt, pygame.key.get_pressed())
             pygame.display.update()
+            await asyncio.sleep(0)
     
     def loadImage(self, name, number=1, angle=0, scale=PIXEL_RATIO, flip=False):
         ''' Loads an image or list of images '''
